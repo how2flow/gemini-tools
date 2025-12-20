@@ -1,0 +1,6 @@
+{
+    "tools": {
+        "discoveryCommand": "bin/get_tools",
+        "callCommand": "bin/call_tools"
+    }
+}

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ -f ".env" ]; then
+  export $(grep -v '^#' .env | xargs)
+fi
+
+FUNC_NAME=${1}
+shift
+
+cmd_echo() {
+  local text
+
+  read INPUT_JSON
+  text=$(echo "${INPUT_JSON}" | jq -r '.text')
+  echo "{\"result\": \"${text}\"}"
+}
+
+case ${FUNC_NAME} in
+  echo)
+    cmd_echo
+    ;;
+  *)
+    echo "{\"error\": \"Unknown Function: ${FUNC_NAME}\"}"
+    ;;
+esac
