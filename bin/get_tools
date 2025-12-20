@@ -15,6 +15,20 @@ cat <<__EOF
       },
       "required": ["text"]
     }
+  },
+  {
+    "name": "gemini-image-gen",
+    "description": "Generation an image using Gemini API from a text prompt",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The prompt for image generation"
+        }
+      },
+      "required": ["prompt"]
+    }
   }
 ]
 __EOF

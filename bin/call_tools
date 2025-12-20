@@ -15,9 +15,44 @@ cmd_echo() {
   echo "{\"result\": \"${text}\"}"
 }
 
+cmd_gemini_image_gen() {
+  local api_key
+  local cURL=${1}
+  local image_data
+  local out_file
+  local prompt
+  local response
+
+  read INPUT_JSON
+  prompt=$(echo "${INPUT_JSON}" | jq -r '.prompt')
+  api_key=${GEMINI_API_KEY}
+  response=$(curl -s -X POST "${cURL}" \
+             -H "x-goog-api-key: ${api_key}" \
+             -H "Content-Type: application/json" \
+             -d "{\"contents\":[{\"parts\":[{\"text\":\"${prompt}\"}]}], \
+                  \"generationConfig\":{\"responseModalities\":[\"IMAGE\"]}}"
+)
+  image_data=$(echo "${response}" | grep -o '"data": "[^"]*"' | cut -d '"' -f4)
+
+  if [ -z "${image_data}" ]; then
+    local clean_response
+    clean_response=$(echo "${response}" | sed 's/"/\\"/g' | tr -d '\n')
+    echo "{\"error\": \"Failed to generate image. API Response: ${clean_response}\"}"
+    return 1
+  fi
+
+  out_file="gemini-image$(date +%s).png"
+  echo "${image_data}" | base64 --decode > "${out_file}"
+  echo "{\"result\": \"Downloaded to ${out_file}\"}"
+}
+
 case ${FUNC_NAME} in
   echo)
     cmd_echo
+    ;;
+  gemini-image-gen)
+    GEMINI_CURL="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent"
+    cmd_gemini_image_gen ${GEMINI_CURL}
     ;;
   *)
     echo "{\"error\": \"Unknown Function: ${FUNC_NAME}\"}"
