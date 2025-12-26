@@ -51,7 +51,7 @@ case ${FUNC_NAME} in
     cmd_echo
     ;;
   gemini-image-gen)
-    GEMINI_CURL="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent"
+    GEMINI_CURL="https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent"
     cmd_gemini_image_gen ${GEMINI_CURL}
     ;;
   *)
